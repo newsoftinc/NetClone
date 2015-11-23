@@ -7,8 +7,8 @@
     <ProjectGuid>{A6FB40B1-B94E-438C-8C40-04AAC0C20036}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NetClone</RootNamespace>
-    <AssemblyName>NetClone</AssemblyName>
+    <RootNamespace>Newsoft.NetClone</RootNamespace>
+    <AssemblyName>Newsoft.NetClone</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -54,6 +54,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -11,9 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		NuGet.Config = NuGet.Config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetClone.Test", "NetClone.Test\NetClone.Test.csproj", "{26C84314-DA3A-4066-BA27-0BEB2FB5346A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Newsoft.NetClone.Test", "NetClone.Test\Newsoft.NetClone.Test.csproj", "{26C84314-DA3A-4066-BA27-0BEB2FB5346A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetClone", "NetClone\NetClone.csproj", "{A6FB40B1-B94E-438C-8C40-04AAC0C20036}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Newsoft.NetClone", "NetClone\Newsoft.NetClone.csproj", "{A6FB40B1-B94E-438C-8C40-04AAC0C20036}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

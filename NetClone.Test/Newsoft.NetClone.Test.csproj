@@ -6,8 +6,8 @@
     <ProjectGuid>{26C84314-DA3A-4066-BA27-0BEB2FB5346A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NetClone.Test</RootNamespace>
-    <AssemblyName>NetClone.Test</AssemblyName>
+    <RootNamespace>Newsoft.NetClone.Test</RootNamespace>
+    <AssemblyName>Newsoft.NetClone.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -58,9 +58,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NetClone\NetClone.csproj">
+    <ProjectReference Include="..\NetClone\Newsoft.NetClone.csproj">
       <Project>{a6fb40b1-b94e-438c-8c40-04aac0c20036}</Project>
-      <Name>NetClone</Name>
+      <Name>Newsoft.NetClone</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
