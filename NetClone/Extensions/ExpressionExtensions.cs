@@ -9,6 +9,13 @@ namespace Newsoft.NetClone.Extensions
 {
     public static class ExpressionExtensions
     {
+        /// <summary>
+        /// Get the object path of a given expression
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TMember"></typeparam>
+        /// <param name="expr"></param>
+        /// <returns></returns>
         public static string GetPath<T,TMember>(this Expression<Func<T, TMember>> expr)
         {
             var stack = new Stack<string>();
@@ -52,58 +59,6 @@ namespace Newsoft.NetClone.Extensions
 
             return string.Join(".", stack.ToArray());
         }
-        //public static string GetPropertyNavigation(this Expression body)
-        //{
-        //    return ParseMemberPath(body.GetMemberInfo());
-        //}
-        //private static MemberExpression GetLamdaMember(Expression body)
-        //{
-        //    if (body.NodeType == ExpressionType.Convert)
-        //    {
-        //        return ((UnaryExpression)body).Operand as MemberExpression;
-        //    }
-        //    else if (body.NodeType == ExpressionType.MemberAccess)
-        //    {
-        //        return body as MemberExpression;
-        //    }
-        //    // unhandled.
-        //    throw new ArgumentException("method");
-        //}
-        //public static string ParseMemberPath(List<MemberExpression> expressions)
-        //{
-        //    string ret = "";
-        //    for (var i = 0; i < expressions.Count; i++)
-        //    {
-        //        if (i != 0)
-        //        {
-        //            ret += ".";
-        //        }
-
-        //        ret += expressions[i].Member.Name;
-        //    }
-
-        //    return ret;
-        //}
-        //public static List<MemberExpression> GetMemberInfo(this Expression method)
-        //{
-        //    // cast the lamba expression.
-        //    LambdaExpression lambda = method as LambdaExpression;
-        //    if (lambda == null)
-        //        throw new ArgumentNullException("method");
-
-        //    // return value.
-        //    var ret = new List<MemberExpression>();
-
-        //    // top.
-        //    ret.Insert(0, GetLamdaMember(lambda.Body));
-
-        //    // each parent.
-        //    while(ret[0].Expression.NodeType != ExpressionType.Parameter)
-        //    {
-        //        ret.Insert(0, GetLamdaMember(ret[0].Expression));
-        //    } 
-
-        //    return ret;
-        //}
+      
     }
 }

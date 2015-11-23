@@ -17,6 +17,14 @@ namespace Newsoft.NetClone
 
         public CloneMode Mode { get; protected set; }
 
+
+        /// <summary>
+        /// Traverse a path and assign the last member property using the provided clone mode.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="dest"></param>
+        /// <param name="memberPath"></param>
+        /// <returns></returns>
         public object Map(object source, object dest, string memberPath = null)
         {
             if (memberPath == null)
@@ -79,6 +87,15 @@ namespace Newsoft.NetClone
             return dest;
         }
 
+        /// <summary>
+        /// Get the remaining path from a path array 
+        /// A.B.C.D
+        /// 
+        /// if path == "B" , trailing path is C.D
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="pathSplit"></param>
+        /// <returns></returns>
         private string GetTrailingPath(string path, string[] pathSplit)
         {
             var newPath = string.Empty;

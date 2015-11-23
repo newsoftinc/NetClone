@@ -9,10 +9,21 @@ namespace Newsoft.NetClone.Extensions
 {
     public static class JsonNetExtensions
     {
+        /// <summary>
+        /// Make a memberMapping path standard with the JToken syntax.
+        /// </summary>
+        /// <param name="mapping"></param>
+        /// <returns></returns>
         public static string ToJsonToken(this MemberMapping mapping)
         {
             return $"$.{ mapping.MemberPath}";
         }
+
+        /// <summary>
+        /// Remove all JOBject tokens exept the provided path.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="paths"></param>
         public static void RemoveAllExcept(this JObject obj, IEnumerable<string> paths)
         {
             if (obj == null || paths == null)
@@ -25,6 +36,12 @@ namespace Newsoft.NetClone.Extensions
             foreach (var token in obj.DescendantsAndSelfReversed().Where(t => !keepersAndParents.Contains(t) && !t.AncestorsAndSelf().Any(p => keepers.Contains(p))))
                 token.RemoveFromLowestPossibleParent();
         }
+
+        /// <summary>
+        /// Remove provided JToken paths
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="paths"></param>
         public static void RemovePaths(this JObject obj, IEnumerable<string> paths)
         {
             if (obj == null || paths == null)
@@ -39,6 +56,11 @@ namespace Newsoft.NetClone.Extensions
             foreach (var token in obj.DescendantsAndSelfReversed().Where(t => toRemoveAndParents.Contains(t) && t.AncestorsAndSelf().Any(p => toRemove.Contains(p))))
                 token.RemoveFromLowestPossibleParent();
         }
+
+        /// <summary>
+        /// Remove the lowest possible parent
+        /// </summary>
+        /// <param name="node"></param>
         public static void RemoveFromLowestPossibleParent(this JToken node)
         {
             if (node == null)
@@ -48,6 +70,12 @@ namespace Newsoft.NetClone.Extensions
                 contained.Remove();
         }
 
+
+        /// <summary>
+        /// All descendants and the node itself, in reverse order.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
         public static IEnumerable<JToken> DescendantsAndSelfReversed(this JToken node)
         {
             if (node == null)
@@ -55,7 +83,13 @@ namespace Newsoft.NetClone.Extensions
             return RecursiveEnumerableExtensions.Traverse(node, t => ListReversed(t as JContainer));
         }
 
-        // Iterate backwards through a list without throwing an exception if the list is modified.
+
+        /// <summary>
+        /// Iterate backwards through a list without throwing an exception if the list is modified.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
         static IEnumerable<T> ListReversed<T>(this IList<T> list)
         {
             if (list == null)
@@ -64,7 +98,7 @@ namespace Newsoft.NetClone.Extensions
                 yield return list[i];
         }
     }
-
+    
 
     public static class RecursiveEnumerableExtensions
     {
