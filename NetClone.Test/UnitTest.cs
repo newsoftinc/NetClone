@@ -15,7 +15,54 @@ namespace NetClone.Test
         public void TestMethod1()
         {
         }
-        
+
+        [TestMethod]
+        public void CollectionMemberNotClonedWhenIgnored()
+        {
+            var clone = new ObjectCloner<A>();
+
+            var a = InitTestObject();
+
+            clone.ForMember(V => V.Bs.Select(V0=>V0.C)).CloneMode(CloneMode.Ignore);
+
+            var aprime = clone.Clone(a);
+
+
+            Assert.IsTrue(aprime.Bs.First().C == null);
+        }
+        [TestMethod]
+        public void CollectionMemberClonedWhenCopy()
+        {
+            var clone = new ObjectCloner<A>();
+
+            var a = InitTestObject();
+
+            clone.ForMember(V => V.Bs.Select(V0 => V0.C)).CloneMode(CloneMode.Copy);
+
+            var aprime = clone.Clone(a);
+
+
+            Assert.IsTrue(aprime.Bs.First().C != null);
+        }
+        [TestMethod]
+        public void CollectionMemberAssignedByRef()
+        {
+            var clone = new ObjectCloner<A>();
+
+            var a = InitTestObject();
+
+            clone.ForMember(V => V.Bs).CloneMode(CloneMode.AsReference);
+
+            var aprime = clone.Clone(a);
+
+            var leftMember = a.Bs.First();
+            var rightMember = aprime.Bs.First();
+
+
+            leftMember.F1 = 34343434;
+
+            Assert.AreEqual(leftMember.F1, rightMember.F1);
+        }
         [TestMethod]
         public void DefaultIsCopy()
         {
