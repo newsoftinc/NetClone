@@ -154,11 +154,11 @@ namespace Newsoft.NetClone
         /// </summary>
         /// <param name="obj">The instance to clone</param>
         /// <returns></returns>
-        private string Serialize(T obj)
+        private string Serialize(T obj,JsonSerializer serializer = null)
         {
             var paths = memberMappings.Values.Where(V=>V.Mode == CloneMode.AsReference || V.Mode == CloneMode.Ignore)
                 .Select(V => V.ToJsonToken()).ToArray();
-            var result = SerializeAndSelectTokens(obj, paths);
+            var result = SerializeAndSelectTokens(obj, paths, serializer);
 
             return result;
 
@@ -170,13 +170,12 @@ namespace Newsoft.NetClone
         /// <param name="root">The instance to clone</param>
         /// <param name="paths">Paths to be excluded from the serialization</param>
         /// <returns></returns>
-        public static string SerializeAndSelectTokens(T root, string[] paths)
+        public static string SerializeAndSelectTokens(T root, string[] paths, JsonSerializer serializer = null)
         {
-            var jsonSerializer = new JsonSerializer();
-            jsonSerializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            jsonSerializer.MaxDepth = 10;
+            if (serializer == null)
+                serializer = JsonSerializer.CreateDefault();
 
-            var obj = JObject.FromObject(root, jsonSerializer);
+            var obj = JObject.FromObject(root, serializer);
 
             obj.RemovePaths(paths);
 
