@@ -9,14 +9,27 @@ using System.Collections;
 
 namespace Newsoft.NetClone
 {
-    public abstract class MemberMapping
+    public class MemberMapping
     {
         public string MemberPath { get; set; }
-        public Type SourceType { get; set; }
-        public Type MemberType { get; set; }
+
 
         public CloneMode Mode { get; protected set; }
 
+        protected MemberMapping()
+        {
+        }
+
+        public MemberMapping(string memberPath)
+        {
+            MemberPath = memberPath;
+        }
+
+        public MemberMapping CloneMode(CloneMode clonemode = NetClone.CloneMode.Default)
+        {
+            Mode = clonemode;
+            return this;
+        }
 
         /// <summary>
         /// Traverse a path and assign the last member property using the provided clone mode.

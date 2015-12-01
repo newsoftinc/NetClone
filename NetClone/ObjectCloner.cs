@@ -15,24 +15,22 @@ using System.Diagnostics;
 
 namespace Newsoft.NetClone
 {
-    public class ObjectCloner<T>
-        where T : class
+    public class ObjectCloner
     {
-        Dictionary<string,MemberMapping> memberMappings = new Dictionary<string, MemberMapping>();
-
-
+        protected Dictionary<string, MemberMapping> memberMappings = new Dictionary<string, MemberMapping>();
         /// <summary>
-        /// Fluent for member settigns 
+        /// For member settigns 
         /// </summary>
-        /// <param name="member"></param>
+        /// <param name="member">The path for the member. use [*] for IEnumerable members (A.Items[*].C)</param>
         /// <returns></returns>
-        public MemberMapping<T,dynamic> ForMember(Expression<Func<T, dynamic>> member)
+        public MemberMapping ForMember(string member)
         {
-
             var memberMapping = GetMemberMapping(member);
 
             return memberMapping;
         }
+
+
 
         /// <summary>
         /// Get a member mapping from the provided navigation path
@@ -41,33 +39,24 @@ namespace Newsoft.NetClone
         /// <returns></returns>
         protected MemberMapping GetMemberMapping(string navigationPath)
         {
-            return memberMappings.ContainsKey(navigationPath) ? memberMappings[navigationPath] : null;
-        }
-      
-        /// <summary>
-        /// Will get the member mapping of a member expression. If not exists is created, else return the existing memberMapping
-        /// </summary>
-        /// <typeparam name="TMember"></typeparam>
-        /// <param name="member"></param>
-        /// <returns></returns>
-        private MemberMapping<T, TMember> GetMemberMapping<TMember>(Expression<Func<T, TMember>> member)
-        {
-            var propertyNav = member.GetPath();// member.GetPropertyNavigation();
+            var propertyNav = navigationPath;
 
             if (!memberMappings.ContainsKey(propertyNav))
             {
-                memberMappings.Add(propertyNav,new MemberMapping<T,TMember>(member));
+                memberMappings.Add(propertyNav, new MemberMapping(propertyNav));
             }
             var mapping = memberMappings[propertyNav];
 
-            return mapping as MemberMapping<T, TMember>;
+            return mapping as MemberMapping;
+            //return memberMappings.ContainsKey(navigationPath) ? memberMappings[navigationPath] : null;
         }
+
 
         /// <summary>
         /// Perform every integrity validation.
         /// </summary>
         /// <returns></returns>
-        private bool IsValid()
+        protected virtual bool IsValid()
         {
             var brokenDescendants = ValidateBrokenDescendants();
 
@@ -95,11 +84,11 @@ namespace Newsoft.NetClone
                     V.Key != memberMapping.MemberPath && //Not the current member
                     V.Key.StartsWith(memberMapping.MemberPath) &&  //Is child of the current member
                     V.Value.Mode == CloneMode.Copy); //Is configured to be cloned;
-                
+
                 if (childPaths.Any())
                 {
                     var msg = "One or many ancestors of a node configured as Copy are configured AsReference. ";
-                    var messages = childPaths.Select(V => $"{V.Value.MemberPath} :: Src.: {V.Value.SourceType} Dst.: {V.Value.MemberType}");
+                    var messages = childPaths.Select(V => $"{V.Value.MemberPath}");
 
                     foreach (var message in messages)
                         msg += message + "\r\n";
@@ -112,18 +101,41 @@ namespace Newsoft.NetClone
             return string.Empty;
 
         }
+        /// <summary>
+        /// Prepare the JObject , cleanup paths and serialize the object
+        /// </summary>
+        /// <param name="root">The instance to clone</param>
+        /// <param name="paths">Paths to be excluded from the serialization</param>
+        /// <returns></returns>
+        protected string SerializeAndSelectTokens(object root, string[] paths, JsonSerializer serializer = null)
+        {
+            if (serializer == null)
+                serializer = JsonSerializer.CreateDefault();
+
+            var obj = JObject.FromObject(root, serializer);
+
+            obj.RemovePaths(paths);
+
+            Debug.WriteLine(obj.ToString().Length);
+
+            var json = obj.ToString(Formatting.None);
+
+            return json;
+        }
+
 
         /// <summary>
         /// Clone an instance of an object.
         /// </summary>
         /// <param name="instance"></param>
         /// <returns></returns>
-        public T Clone(T instance)
+        public T Clone<T>(T instance, JsonSerializer serializer = null)
+            where T : class
         {
             var breakChilds = IsValid();
 
-            var jsonResult = Serialize(instance);
-            var cloneResult = JsonConvert.DeserializeObject<T>(jsonResult);
+            var jsonResult = Serialize(instance, serializer);
+            var cloneResult = (T)JsonConvert.DeserializeObject(jsonResult, instance.GetType());
 
             var resultWithReferences = RestoreReferences(instance, cloneResult);
 
@@ -136,9 +148,10 @@ namespace Newsoft.NetClone
         /// <param name="origin">Object to be cloned</param>
         /// <param name="target">Cloned object</param>
         /// <returns></returns>
-        private T RestoreReferences(T origin, T target)
+        protected T RestoreReferences<T>(T origin, T target)
+            where T : class
         {
-            var byRefMembers = memberMappings.Where(V => V.Value.Mode == CloneMode.AsReference).Select(v=>v.Value);
+            var byRefMembers = memberMappings.Where(V => V.Value.Mode == CloneMode.AsReference).Select(v => v.Value);
 
             foreach (MemberMapping byRefMember in byRefMembers)
             {
@@ -154,9 +167,10 @@ namespace Newsoft.NetClone
         /// </summary>
         /// <param name="obj">The instance to clone</param>
         /// <returns></returns>
-        private string Serialize(T obj,JsonSerializer serializer = null)
+        protected string Serialize<T>(T obj, JsonSerializer serializer = null)
+            where T : class
         {
-            var paths = memberMappings.Values.Where(V=>V.Mode == CloneMode.AsReference || V.Mode == CloneMode.Ignore)
+            var paths = memberMappings.Values.Where(V => V.Mode == CloneMode.AsReference || V.Mode == CloneMode.Ignore)
                 .Select(V => V.ToJsonToken()).ToArray();
             var result = SerializeAndSelectTokens(obj, paths, serializer);
 
@@ -164,26 +178,5 @@ namespace Newsoft.NetClone
 
         }
 
-        /// <summary>
-        /// Prepare the JObject , cleanup paths and serialize the object
-        /// </summary>
-        /// <param name="root">The instance to clone</param>
-        /// <param name="paths">Paths to be excluded from the serialization</param>
-        /// <returns></returns>
-        public static string SerializeAndSelectTokens(T root, string[] paths, JsonSerializer serializer = null)
-        {
-            if (serializer == null)
-                serializer = JsonSerializer.CreateDefault();
-
-            var obj = JObject.FromObject(root, serializer);
-
-            obj.RemovePaths(paths);
-
-            Debug.WriteLine(obj.ToString().Length);
-
-            var json = obj.ToString(Formatting.None);
-
-            return json;
-        }
     }
 }

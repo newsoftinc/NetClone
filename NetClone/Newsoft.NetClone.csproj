@@ -50,6 +50,7 @@
     <Compile Include="MemberMapping.cs" />
     <Compile Include="MemberMappingGeneric.cs" />
     <Compile Include="ObjectCloner.cs" />
+    <Compile Include="ObjectClonerGeneric.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -5,23 +5,20 @@ using Newsoft.NetClone;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using Newsoft.NetClone.Test;
 
 namespace NetClone.Test
 {
     [TestClass]
-    public class UnitTest
+    public class ObjectClonerGenericTest
     {
-        [TestMethod]
-        public void TestMethod1()
-        {
-        }
 
         [TestMethod]
-        public void CollectionMemberNotClonedWhenIgnored()
+        public void GenericCollectionMemberNotClonedWhenIgnored()
         {
             var clone = new ObjectCloner<A>();
 
-            var a = InitTestObject();
+            var a = Helper.InitTestObject();
 
             clone.ForMember(V => V.Bs.Select(V0=>V0.C)).CloneMode(CloneMode.Ignore);
 
@@ -31,11 +28,11 @@ namespace NetClone.Test
             Assert.IsTrue(aprime.Bs.First().C == null);
         }
         [TestMethod]
-        public void CollectionMemberClonedWhenCopy()
+        public void GenericCollectionMemberClonedWhenCopy()
         {
             var clone = new ObjectCloner<A>();
 
-            var a = InitTestObject();
+            var a = Helper.InitTestObject();
 
             clone.ForMember(V => V.Bs.Select(V0 => V0.C)).CloneMode(CloneMode.Copy);
 
@@ -45,11 +42,11 @@ namespace NetClone.Test
             Assert.IsTrue(aprime.Bs.First().C != null);
         }
         [TestMethod]
-        public void CollectionMemberAssignedByRef()
+        public void GenericCollectionMemberAssignedByRef()
         {
             var clone = new ObjectCloner<A>();
 
-            var a = InitTestObject();
+            var a = Helper.InitTestObject();
 
             clone.ForMember(V => V.Bs).CloneMode(CloneMode.AsReference);
 
@@ -64,11 +61,11 @@ namespace NetClone.Test
             Assert.AreEqual(leftMember.F1, rightMember.F1);
         }
         [TestMethod]
-        public void DefaultIsCopy()
+        public void GenericDefaultIsCopy()
         {
             var clone = new Newsoft.NetClone.  ObjectCloner<A>();
 
-            var a = InitTestObject();
+            var a = Helper.InitTestObject();
 
             var aprime = clone.Clone(a);
 
@@ -78,11 +75,11 @@ namespace NetClone.Test
             Assert.AreNotEqual(a.B.F1, aprime.B.F1);
         }
         [TestMethod]
-        public void IsReference()
+        public void GenericIsReference()
         {
             var clone = new ObjectCloner<A>();
 
-            var a = InitTestObject();
+            var a = Helper.InitTestObject();
 
             clone.ForMember(V => V.B.C).CloneMode(CloneMode.AsReference);
 
@@ -93,13 +90,13 @@ namespace NetClone.Test
             Assert.AreEqual(a.B.C.F1, aprime.B.C.F1);
         }
         [TestMethod]
-        public void CollectionMemberIsReference()
+        public void GenericCollectionMemberIsReference()
         {
             var clone = new ObjectCloner<A>();
             clone.ForMember(V => V.Bs).CloneMode(CloneMode.Copy);
             clone.ForMember(V => V.Bs.Select(V0 => V0.C)).CloneMode(CloneMode.AsReference);
 
-            var a = InitTestObject();
+            var a = Helper.InitTestObject();
             var aprime = clone.Clone(a);
 
             var memberSrc = a.Bs.First();
@@ -112,13 +109,13 @@ namespace NetClone.Test
             Assert.AreNotEqual(memberDst.F1, memberSrc.F1);
         }
         [TestMethod]
-        public void CollectionIsCopy()
+        public void GenericCollectionIsCopy()
         {
             var clone = new ObjectCloner<A>();
             clone.ForMember(V => V.Bs).CloneMode(CloneMode.Copy);
             clone.ForMember(V => V.Bs.Select(V0 => V0.C)).CloneMode(CloneMode.AsReference);
 
-            var a = InitTestObject();
+            var a = Helper.InitTestObject();
             var aprime = clone.Clone(a);
 
 
@@ -131,7 +128,7 @@ namespace NetClone.Test
             Assert.AreNotEqual(memberDst.F1, memberSrc.F1);
         }
         [TestMethod]
-        public void ThrowWhenReferenceDescendantSetAsCopy()
+        public void GenericThrowWhenReferenceDescendantSetAsCopy()
         {
             var clone = new ObjectCloner<A>();
             clone.ForMember(V => V.B).CloneMode(CloneMode.AsReference);
@@ -140,7 +137,7 @@ namespace NetClone.Test
             var hasTrown = false;
             try
             {
-                var a = InitTestObject();
+                var a = Helper.InitTestObject();
                 var aprime = clone.Clone(a);
             }
             catch
@@ -150,85 +147,7 @@ namespace NetClone.Test
 
             Assert.IsTrue(hasTrown);
         }
-        public A InitTestObject()
-        {
-            var a = new A()
-            {
-                F1 = 1,
-                Id = Guid.NewGuid(),
-                Bs = new List<B>() {
-                    new B()
-                    {
-                        F1 = 10,
-                        Id = Guid.NewGuid(),
-                        C = new C()
-                        {
-                            F1 = 11,
-                            Id = Guid.NewGuid(),
-                            D = new D()
-                            {
-                                F1 = 12,
-                                Id = Guid.NewGuid(),
-                            }
-                        }
-                    },
-                    new B()
-                    {
-                        F1 = 20,
-                        Id = Guid.NewGuid(),
-                        C = new C()
-                        {
-                            F1 = 21,
-                            Id = Guid.NewGuid(),
-                            D = new D()
-                            {
-                                F1 = 22,
-                                Id = Guid.NewGuid(),
-                            }
-                        }
-                    }
-                },
-                B = new B()
-                {
-                    F1 = 2,
-                    Id = Guid.NewGuid(),
-                    C = new C()
-                    {
-                        F1 = 3,
-                        Id = Guid.NewGuid(),
-                        D = new D()
-                        {
-                            F1 = 8,
-                            Id = Guid.NewGuid(),
-                        }
-                    },
-                    D = new D()
-                    {
-                        F1 = 4,
-                        Id = Guid.NewGuid(),
-                    },
-                },
-                C = new C()
-                {
-                    F1 = 5,
-                    Id = Guid.NewGuid(),
-                    D = new D()
-                    {
-                        F1 = 6,
-                        Id = Guid.NewGuid(),
-                    },
-                },
-                D = new D()
-                {
-                    F1 = 7,
-                    Id = Guid.NewGuid(),
-                },
 
-            };
-            a.B.C.F1 = 1234;
-
-            return a;
-        }
     }
 
 }

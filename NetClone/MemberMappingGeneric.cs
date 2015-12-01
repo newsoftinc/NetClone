@@ -10,6 +10,9 @@ namespace Newsoft.NetClone
 {
     public class MemberMapping<TSource, TMember> : MemberMapping
     {
+        public Type SourceType { get; set; }
+        public Type MemberType { get; set; }
+
         public MemberMapping(Expression<Func<TSource, TMember>> member)
         {
             SourceType = typeof(TSource);
