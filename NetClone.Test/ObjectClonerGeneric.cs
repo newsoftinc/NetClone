@@ -63,7 +63,7 @@ namespace NetClone.Test
         [TestMethod]
         public void GenericDefaultIsCopy()
         {
-            var clone = new Newsoft.NetClone.  ObjectCloner<A>();
+            var clone = new Newsoft.NetClone.ObjectCloner<A>();
 
             var a = Helper.InitTestObject();
 
