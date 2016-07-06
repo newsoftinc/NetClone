@@ -135,7 +135,13 @@ namespace Newsoft.NetClone
             var breakChilds = IsValid();
 
             var jsonResult = Serialize(instance, serializer);
-            var cloneResult = (T)JsonConvert.DeserializeObject(jsonResult, instance.GetType());
+
+            // determine final type.
+            var finalType = instance.GetType();
+            if (finalType.IsEFProxy())
+                finalType = finalType.GetEFProxyRealType();
+
+            var cloneResult = (T)JsonConvert.DeserializeObject(jsonResult, finalType);
 
             var resultWithReferences = RestoreReferences(instance, cloneResult);
 
