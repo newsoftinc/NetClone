@@ -16,5 +16,6 @@ namespace Newsoft.NetClone.Test.Model
 
         public D D { get; set; }
         public int F1 { get; set; }
+        public List<B> Bs { get; set; }
     }
 }

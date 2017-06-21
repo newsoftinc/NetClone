@@ -12,6 +12,27 @@ namespace NetClone.Test
     [TestClass]
     public class ObjectCloneTest
     {
+        [TestMethod]
+        public void ExceptionThrownWhenDescendantOfAReferenceMemberHasCloneMode()
+        {
+            var clone = new ObjectCloner();
+
+            var a = Helper.InitTestObject();
+
+            clone.ForMember("Bs[*]").CloneMode(CloneMode.AsReference);
+            clone.ForMember("Bs[*].C").CloneMode(CloneMode.Ignore);
+            try
+            {
+                var aprime = clone.Clone(a);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsTrue(true);
+                return;
+            }
+            Assert.IsTrue(false);
+
+        }
 
         [TestMethod]
         public void CollectionMemberNotClonedWhenIgnored()
